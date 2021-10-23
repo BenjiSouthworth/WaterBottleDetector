@@ -8,5 +8,5 @@ if __name__ == '__main__':
     testingData = []
     testingLabels = []
 
-    model = pbc()
+    model = pbc(featureExtract=True)
     model.train(trainingData, trainingLabels, testingData, testingLabels, 420)
