@@ -23,11 +23,34 @@ def preprocess_image(image):
 	# return the preprocessed image
 	return image
 
+import PySimpleGUI as sg
+  
+# Add some color
+# to the window
+sg.theme('SandyBeach')     
+  
+# Very basic window.
+# Return values using
+# automatic-numbered keys
+layout = [
+    [sg.Text('Please enter yourdesired image for classification')],
+    [sg.Text('Image.type', size =(15, 1)), sg.InputText()],
+    [sg.Submit()]
+]
+  
+window = sg.Window('Simple data entry window', layout)
+event, value = window.read()
+window.close()
+  
+# The input data looks like a simple list 
+# when automatic numbered
+print(event, value[0])   
+
 
 print("Enter photo name.type: ")
 
 source = "images/"
-inn = input()
+inn = value[0]#input()
 val = source+inn
 
 print("\nYou've entered:", val)
