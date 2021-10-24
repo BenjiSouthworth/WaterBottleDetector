@@ -26,14 +26,11 @@ def preprocess_image(image):
 import PySimpleGUI as sg
   
 # Add some color
-# to the window
 sg.theme('SandyBeach')     
   
 # Very basic window.
-# Return values using
-# automatic-numbered keys
 layout = [
-    [sg.Text('Please enter yourdesired image for classification')],
+    [sg.Text('Please enter your desired image for classification')],
     [sg.Text('Image.type', size =(15, 1)), sg.InputText()],
     [sg.Submit()]
 ]
@@ -41,22 +38,12 @@ layout = [
 window = sg.Window('Simple data entry window', layout)
 event, value = window.read()
 window.close()
-  
-# The input data looks like a simple list 
-# when automatic numbered
-print(event, value[0])   
-
-
-print("Enter photo name.type: ")
 
 source = "images/"
 inn = value[0]#input()
 val = source+inn
 
-print("\nYou've entered:", val)
-
 image_input = val
-
 
 # load our the network weights from disk, flash it to the current
 # device, and set it to evaluation mode
@@ -86,18 +73,44 @@ logits = model(image)
 probabilities = torch.nn.Softmax(dim=-1)(logits)
 sortedProba = torch.argsort(probabilities, dim=-1, descending=True)
 
-# loop over the predictions and display the rank-5 predictions and
-# corresponding probabilities to our terminal
-for (i, idx) in enumerate(sortedProba[0, :5]):
-	print("{}. {}: {:.2f}%".format
-		(i, imagenetLabels[idx.item()].strip(),
-		probabilities[0, idx.item()] * 100))
 
-# draw the top prediction on the image and display the image to
-# our screen
-(label, prob) = (imagenetLabels[probabilities.argmax().item()],
-	probabilities.max().item())
-cv2.putText(orig, "Label: {}, {:.2f}%".format(label.strip(), prob * 100),
-	(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
-cv2.imshow("Classification", orig)
-cv2.waitKey(0)
+#arrays to hold th top stat
+topclasses = [' ']*100
+topprobs   = [' ']*100
+
+for (i, idx) in enumerate(sortedProba[0, :5]):
+	topclasses[i] = imagenetLabels[idx.item()].strip()
+	topprobs[i]   = str("{:.2f}%".format(probabilities[0, idx.item()] * 100))
+	#print("{}. {}: {:.2f}%".format
+		#(i, imagenetLabels[idx.item()].strip(),
+		#probabilities[0, idx.item()] * 100))
+#^^print functionality for non-gui^^
+
+
+sg.theme('DarkGreen')     
+  
+# Very basic window.
+
+layout = [
+    [sg.Text('Top 3 Classication Results')],
+    [sg.Text(topclasses[0], size =(0, 1)),sg.Text(': ', size =(0, 1)) ,sg.Text(topprobs[0], size =(10, 1))],
+    [sg.Button('View Image and watermark'),sg.Button('Exit')]
+]
+  
+window = sg.Window('RESULTS', layout)
+
+while True:             # Event Loop
+		event, value = window.read()
+		print(event, value)
+		if event == sg.WIN_CLOSED or event == 'Exit':
+			break
+		if event == 'View Image and watermark':            #draw it
+			(label, prob) = (imagenetLabels[probabilities.argmax().item()],
+				probabilities.max().item())
+			cv2.putText(orig, "Label: {}, {:.2f}%".format(label.strip(), prob * 100),
+				(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+			cv2.imshow("Classification", orig)
+			cv2.waitKey(0)
+window.close()
+
+#exits here woooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
