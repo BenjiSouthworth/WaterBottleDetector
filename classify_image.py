@@ -92,7 +92,7 @@ sg.theme('DarkGreen')
 # Very basic window.
 
 layout = [
-    [sg.Text('Top 3 Classication Results')],
+    [sg.Text('Top Classication Result')],
     [sg.Text(topclasses[0], size =(0, 1)),sg.Text(': ', size =(0, 1)) ,sg.Text(topprobs[0], size =(10, 1))],
     [sg.Button('View Image and watermark'),sg.Button('Exit')]
 ]
